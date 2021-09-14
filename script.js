@@ -1,4 +1,3 @@
-
 const cards = document.querySelectorAll('.memory-card');
 let hasFlippedCard = false;
 let lockBoard = false;
@@ -8,17 +7,19 @@ let interval;
 let timeUp = false
 
 
-// CE QUE JE VEUX FAIRE :
+// ----------------------------CE QUE JE VEUX FAIRE :------------------------
 
-//Un compte à rebours de 30 secondes qui demare au click de la première carte.
+//Un compte à rebours de 1 minute qui demare au click de la première carte.
 
 // Si le joueur trouve toutes les paires en moins 1 minute message:
-//Bravo tu a trouvé toutes les paires en "x" coups +  apparition reset button
+//Bravo tu a trouvé toutes les paires! rejoue et amelire ton temps +  apparition reset button
 
 // Si non : game over + apparition reset button
 
 
-//fonction qui demarre le compte à rebours à  1 minute
+
+
+//fonction qui demarre le compte à rebours à 1 minute
 function startGame() {
   timeUp = false;
   launch_count_down();
@@ -37,12 +38,12 @@ function launch_count_down() { //apelle la function timer
   //creation de la variable qui appelle la count_down_div
   let count_down_div = document.getElementById("count_down_div");
   // 1- le délai
-  let total_delay = 60 * 1000; // toutes les 30 SECONDES
+  let total_delay = 60 * 1000; // toutes les minutes
   // 2- Compte à rebours
-  let count_down_delay = 1000 * 1; // affichage toutes les 1 secondes,
+  let count_down_delay = 1000 * 1; // affichage toutes les 1 seconde,
   let count_down = 0;
   count_down_div.textContent = timer((total_delay - count_down) / 1000);
-  // setInterval pour que la fx se reitere 30 fois pour 30 sec
+  // setInterval pour que la fx se reitere 60 fois pour 60 sec
   let count_Interval = window.setInterval(function () {
     //iterration de +1 sur le count_down donc transform A REVOIR !!!
     count_down += count_down_delay;
@@ -51,12 +52,15 @@ function launch_count_down() { //apelle la function timer
     if (count_down >= total_delay) { count_down = 0; }
   }, count_down_delay);
 
-  // 3- A LA FIN du compte à rebours
+  // 3- A LA FIN du compte à rebours -> GAME OVER si l'utilisateur n'a pas fini à temps
+  // + blocage du jeu
   setTimeout(function () {
     // on STOPPE
     clearInterval(count_Interval);
     count_down_div.textContent = 'GAME OVER';//affiche game over à la fin du jeu
+    lockBoard = true;
   }, total_delay);
+
 }
 
 
@@ -70,7 +74,7 @@ function launch_count_down() { //apelle la function timer
 //(appel de cette fonction dans le foreach tout en bas)
 function flipCard() {
   cards.forEach(card => card.removeEventListener('click', startGame));
-  
+
   if (lockBoard) return;
   if (this === firstCard) return;
 
@@ -106,9 +110,47 @@ function disableCards() {
 
   resetBoard();
 }
+//----------------------RAJOUT RECENT POUR ESSAYER D'ARETER LE JEU QUAND ON GAGNE--------
 
-// Rajouter ici une fonction au cas ou toutes les cartes sont retournées, pour dire: 
-//gagné en x temps et x coups???
+function stopTime() {
+
+  let count_down_div = document.getElementById("count_down_div");
+  // 1- le délai
+  let total_delay = 60 * 1000; // toutes les 30 SECONDES
+  // 2- Compte à rebours
+  let count_down_delay = 1000 * 1; // affichage toutes les 1 secondes,
+  let count_down = 0;
+  count_down_div.textContent = timer((total_delay - count_down) / 1000);
+  // setInterval pour que la fx se reitere 30 fois pour 30 sec
+  let count_Interval = window.setInterval(function () {
+    //iterration de +1 sur le count_down donc transform A REVOIR !!!
+    count_down += count_down_delay;
+    //count_down += 1000;
+    count_down_div.textContent = timer((total_delay - count_down) / 1000);
+    if (count_down >= total_delay) { count_down = 0; }
+  }, count_down_delay);
+
+  clearInterval(count_Interval); // pour que "count-Interval" ne soit pas "not defined" il 
+  //faut reprendre toutes les variables declarées plus haut
+
+}
+
+//------PAS ENCORE TROUVÉ -----//
+
+function gameWin() {
+    //if (disableCards = true){
+    //if (hasFlippedCard = true){
+    //if (disableCards.lenght === 12) {
+    //if (cards.removeEventListener.lenght('click', flipCard) === 12){
+    //if (hasFlippedCard.length === 12) {
+    if (checkForMatch.length === 12) {
+      count_down_div.textContent = 'Bravo! Tu as trouvé toutes les paires! Rejoue et améliore ton temps!';
+      stopTime();
+      resetBoard();
+    }
+}
+
+//-----------SUITE --------------
 
 function unflipCards() {
   lockBoard = true;
@@ -127,7 +169,7 @@ function resetBoard() {
   [firstCard, secondCard] = [null, null];
 }
 
-// fonction pour remelanger les cartes
+// fonction pour remélanger les cartes
 (function shuffle() {
   cards.forEach(card => {
     let randomPos = Math.floor(Math.random() * 12);
@@ -135,9 +177,7 @@ function resetBoard() {
   });
 })();
 
-//Au click sur une carte, on demare le jeu
+//Au click sur une carte, on demare le jeu et le timer
 cards.forEach(card => card.addEventListener('click', startGame));
 cards.forEach(card => card.addEventListener('click', flipCard));
-
-
 
