@@ -81,8 +81,8 @@ h1 {
 }
 */
 .memory-game {
-    width: 600px;
-    height: 600px;
+    width: 530px;
+    height: 530px;
     margin: auto;
     display: flex;
     flex-wrap: wrap;

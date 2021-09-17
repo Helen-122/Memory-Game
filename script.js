@@ -7,11 +7,12 @@ let interval;
 let timeUp = false
 let moves = 0; // AJOUT COUPS JOUES
 let i = 0; // COMPTEUR QUI PERMETTRA D'INCREMENTER LE NOMBRE DE FOIS OU LES CARDS RESTENT RETOURNEES
+let gameOver; // SET TIME OUT GAMEOVER AU BOUT DE 60 SECS
 let count_Interval;
 let count_down;
+let resetButton = document.createElement('button');
 
 // CE QUE JE VEUX FAIRE :
-
 
 
 // Si le joueur trouve toutes les paires en moins 1 minute message:
@@ -59,24 +60,21 @@ function launch_count_down() { //apelle la function timer
   }, count_down_delay);
 
   // 3- FIN DU COMPTE A REBOURS DANS winGame() 
-  if (i < 8) {
-    setTimeout(function () {
-      let resetButton = document.createElement('button');
-      let bouton = document.querySelector(".bouton");
-      clearInterval(count_Interval);
-      count_down_div.textContent = 'GAME OVER';//affiche game over à la fin du jeu
-      lockBoard = true; //LOCK LE BOARD QUAND LE TEMPS EST OVER
 
-      
-      resetButton.classList.add("Rejouer", "btn", "btn-primary", "text-white", "btn-outline-dark");
-      resetButton.textContent = "Rejouer";
-      bouton.append(resetButton);
+  gameOver = setTimeout(function () {
+    let resetButton = document.createElement('button');
+    let bouton = document.querySelector(".bouton");
+    resetButton.classList.add("Rejouer", "btn", "btn-outline-light", "text-dark");
+    resetButton.textContent = "Rejouer";
+    bouton.append(resetButton);
 
-      resetButton.addEventListener('click', resetGame);
-    }, total_delay);
-  }
-
+    resetButton.addEventListener('click', resetGame);
+    clearInterval(count_Interval);
+    count_down_div.textContent = 'GAME OVER';//affiche game over à la fin du jeu
+    lockBoard = true; //LOCK LE BOARD QUAND LE TEMPS EST OVER
+  }, total_delay);
 }
+
 
 // ---------------------------THE GAME------------------------------------------
 
@@ -158,6 +156,28 @@ function resetBoard() {
   });
 })();
 
+
+
+function winGame() { //A PLACER DANS LA FONCTION OU LES CARDS MATCHENT --> disabledCards();
+  let count_down_div = document.getElementById("count_down_div");
+  if (i > 7) {
+    clearInterval(count_Interval);
+    count_down_div.textContent = 'BIEN OUEJ : ' + moves + ' coups';
+    clearTimeout(gameOver);
+
+    let resetButton = document.createElement('button');
+    let bouton = document.querySelector(".bouton");
+    resetButton.classList.add("Rejouer", "btn", "btn-outline-light", "text-dark");
+    resetButton.textContent = "Rejouer";
+    bouton.append(resetButton);
+
+
+
+  }
+}
+
+
+/*
 function winGame() { //A PLACER DANS LA FONCTION OU LES CARDS MATCHENT --> disabledCards();
   let count_down_div = document.getElementById("count_down_div");
 
@@ -175,6 +195,30 @@ function winGame() { //A PLACER DANS LA FONCTION OU LES CARDS MATCHENT --> disab
     }, total_delay);
 
   }
+}
+*/
+
+function resetGame() {
+
+  //1 ) enlever le reset bouton
+  //2) refaire un shuffle
+  //4) re- retourner toutes les cartes 
+  //let resetButton = document.createElement('button');
+  
+  /* 
+    let interval;
+    let timeUp = false
+    let moves = 0; // AJOUT COUPS JOUES
+    let i = 0; // COMPTEUR QUI PERMETTRA D'INCREMENTER LE NOMBRE DE FOIS OU LES CARDS RESTENT RETOURNEES
+    let count_Interval;
+    let count_down;
+    */
+  let bouton = document.querySelector('.bouton');
+  bouton.removeChild('button');
+  shuffle();
+  startGame();
+  //resetBoard();
+
 }
 
 //Au click sur une carte, on demare le jeu
